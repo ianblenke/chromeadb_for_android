@@ -1,0 +1,15 @@
+#!/bin/bash -e
+brew cask install java
+brew install gradle android-sdk
+wget -O /tmp/javaforosx.dmg http://support.apple.com/downloads/DL1572/en_US/javaforosx.dmg
+hdiutil mount /tmp/javaforosx.dmg
+cp -a /Volumes/Java\ for\ OS\ X\ 2015-001/JavaForOSX.pkg /tmp
+hdiutil unmount /Volumes/Java\ for\ OS\ X\ 2015-001/
+sudo installer -pkg /tmp/JavaForOSX.pkg -target /
+rm -f /tmp/JavaForOSX.pkg
+/usr/libexec/java_home -V
+export JAVA_HOME="$(/usr/libexec/java_home -v 1.6)"
+echo y | android update sdk -t tools,platform-tools,extra-android-support,extra-android-m2repository,android-18 --force --no-ui
+echo y | android update sdk -a -u -t $(android list sdk -a | grep 24.4 | cut -d- -f1)
+ln -s /usr/local/Cellar/android-sdk/24.4.1_1 /usr/local/Cellar/android-sdk/24.4
+./gradlew build
